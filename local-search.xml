@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  
+  
+  
+  <entry>
+    <title>使用 Python 实现优先级队列</title>
+    <link href="/2021/11/13/%E4%BD%BF%E7%94%A8-Python-%E5%AE%9E%E7%8E%B0%E4%BC%98%E5%85%88%E7%BA%A7%E9%98%9F%E5%88%97/"/>
+    <url>/2021/11/13/%E4%BD%BF%E7%94%A8-Python-%E5%AE%9E%E7%8E%B0%E4%BC%98%E5%85%88%E7%BA%A7%E9%98%9F%E5%88%97/</url>
+    
+    <content type="html"><![CDATA[<p>有时候会不可避免的用到优先级队列，根据优先级来决定调度，这一点在事件监听器中非常常见。</p><p>如何用 <code>Python</code> 实现优先级队列？</p><p><code>Python</code> 有个标准库模块 <code>heapq</code>，这个模块提供了堆队列的相关操作。</p><span id="more"></span><p>简单来说，就是利用了 <code>heapq</code> 的堆队列，构造了一个优先级队列。并利用迭代来逐个获取元素，从而达到 <code>priority</code> 越小越优先的效果。</p><figure class="highlight python"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs python"><span class="hljs-keyword">from</span> typing <span class="hljs-keyword">import</span> NoReturn, <span class="hljs-type">Any</span>, NewType, Iterator<br><span class="hljs-keyword">import</span> heapq<br><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">PriorityQueue</span>(<span class="hljs-params">Iterator</span>):</span><br>    T = NewType(<span class="hljs-string">&#x27;T&#x27;</span>, <span class="hljs-type">Any</span>) <span class="hljs-comment"># Type[T]</span><br><br>    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span>(<span class="hljs-params">self</span>):</span><br>        self.queue = []<br>        self.index = <span class="hljs-number">0</span><br><br>    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">join</span>(<span class="hljs-params">self, item: T, priority: <span class="hljs-built_in">int</span></span>) -&gt; NoReturn:</span><br>        <span class="hljs-comment"># 使用 heapq.heappush 将 item 插入堆队列</span><br>        <span class="hljs-comment"># 如果把 priority 改为 -priority, 可实现 `priority` 越大越优先</span><br>        heapq.heappush(self.queue, (priority, self.index, item))<br>        <span class="hljs-comment"># index 索引可以将有相同优先级的 item 以适当的顺序排列, 避免顺序错乱</span><br>        self.index += <span class="hljs-number">1</span><br><br>    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__next__</span>(<span class="hljs-params">self</span>) -&gt; T:</span><br>        <span class="hljs-comment"># 构造迭代器</span><br>        <span class="hljs-comment"># 可以使用 for item in priority_queue 迭代获取最小元素</span><br>        <span class="hljs-keyword">if</span> self.queue:<br>            <span class="hljs-comment"># 使用 heapq.heappop 将堆队列中的最小元素弹出</span><br>            <span class="hljs-comment"># heapq.heappop 的结果是个元组, 根据 (priority, index, item) 获取 item</span><br>            <span class="hljs-comment"># 即获取 tuple[-1]</span><br>            <span class="hljs-keyword">return</span> heapq.heappop(self.queue)[-<span class="hljs-number">1</span>]<br>        <span class="hljs-keyword">else</span>:<br>            <span class="hljs-keyword">raise</span> StopIteration<br>    <br><span class="hljs-meta">    @property</span><br>    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">first</span>(<span class="hljs-params">self</span>) -&gt; T:</span><br>        <span class="hljs-comment"># 如果不想用迭代器, 也可以逐个获取 first</span><br>        <span class="hljs-comment"># 使用 priority_queue.first 获取</span><br>        <span class="hljs-keyword">return</span> heapq.heappop(self.queue)[-<span class="hljs-number">1</span>]<br></code></pre></div></td></tr></table></figure>]]></content>
+    
+    
+    <categories>
+      
+      <category>编程</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Python</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>浮点型的有效位数？精度丢失？</title>
+    <link href="/2021/10/27/%E6%B5%AE%E7%82%B9%E5%9E%8B%E7%9A%84%E6%9C%89%E6%95%88%E4%BD%8D%E6%95%B0-%E7%B2%BE%E5%BA%A6%E4%B8%A2%E5%A4%B1/"/>
+    <url>/2021/10/27/%E6%B5%AE%E7%82%B9%E5%9E%8B%E7%9A%84%E6%9C%89%E6%95%88%E4%BD%8D%E6%95%B0-%E7%B2%BE%E5%BA%A6%E4%B8%A2%E5%A4%B1/</url>
+    
+    <content type="html"><![CDATA[<p>今天发现了一个奇怪的现象：当我在 <code>Python</code> 使用 <code>1.0000000000000001e-16</code>（即 <code>0.0000000000000001</code>）去加另一个数的时候，发现无论怎么加，另一个数就是不变。这个特别长的浮点数就像 <code>0</code> 一样，系统自动把最后面那位 <code>1</code> 给省略了。</p><span id="more"></span><p>其实，早在很久以前我就已经发现了这个问题：<code>0.1 + 0.2</code> 竟然等于 <code>0.30000000000000004</code>，并且 <code>0.1 + 0.2 != 0.3</code>，这很颠覆我的三观。</p><p>有这样一段代码可以很好地显示出来：</p><figure class="highlight python"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs python"><span class="hljs-meta">&gt;&gt;&gt; </span>f: <span class="hljs-built_in">float</span> = <span class="hljs-number">0.0</span><br><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">10</span>):<br><span class="hljs-meta">... </span>    f += <span class="hljs-number">0.1</span><br><span class="hljs-meta">... </span>    <span class="hljs-built_in">print</span>(f)<br>...<br><br><span class="hljs-number">0.1</span><br><span class="hljs-number">0.2</span><br><span class="hljs-number">0.30000000000000004</span><br><span class="hljs-number">0.4</span><br><span class="hljs-number">0.5</span><br><span class="hljs-number">0.6</span><br><span class="hljs-number">0.7</span><br><span class="hljs-number">0.7999999999999999</span><br><span class="hljs-number">0.8999999999999999</span><br><span class="hljs-number">0.9999999999999999</span><br>&gt;&gt;&gt;<br></code></pre></div></td></tr></table></figure><p>我在网上翻阅了一些资料，发现原来不止 <code>Python</code>，还有其他任何使用二进制浮点数的编程语言都会有这个问题。</p><p>原来，现在的计算机几乎都采用了 <code>IEEE-745 标准</code>。一些浮点数在转化为二进制的时候会出现无限循环：</p><figure class="highlight plaintext"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs plain">0.1 =&gt; 0.0001 1001 1001 1001 1001...<br>0.2 =&gt; 0.0011 0011 0011 0011 0011...<br></code></pre></div></td></tr></table></figure><p>所以 <code>0.1 + 0.2</code> 在计算并转换为二进制的时候也不可避免地出现无限循环：</p><figure class="highlight plaintext"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs plain">0.3 =&gt; 0.0100 1100 1100 1100 1100...<br></code></pre></div></td></tr></table></figure><p>可以看出，<code>0.1</code> 和 <code>0.2</code> 在转换为二进制时就发生了一次精度丢失，而对于计算后的二进制又有一次精度丢失，所以最终的结果也就不准确。</p><p>在 <code>Python</code> 中，似乎可以这样来计算：</p><figure class="highlight python"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs python"><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-keyword">from</span> decimal <span class="hljs-keyword">import</span> Decimal<br><span class="hljs-meta">&gt;&gt;&gt; </span>Decimal(<span class="hljs-number">0.1</span>) + Decimal(<span class="hljs-number">0.2</span>)<br>Decimal(<span class="hljs-string">&#x27;0.3000000000000000166533453694&#x27;</span>)<br><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-built_in">float</span>(Decimal(<span class="hljs-number">0.1</span>) + Decimal(<span class="hljs-number">0.2</span>))<br><span class="hljs-number">0.30000000000000004</span><br><span class="hljs-meta">&gt;&gt;&gt; </span>Decimal(<span class="hljs-string">&#x27;0.1&#x27;</span>) + Decimal(<span class="hljs-string">&#x27;0.2&#x27;</span>)<br>Decimal(<span class="hljs-string">&#x27;0.3&#x27;</span>)<br><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-built_in">float</span>(Decimal(<span class="hljs-string">&#x27;0.1&#x27;</span>) + Decimal(<span class="hljs-string">&#x27;0.2&#x27;</span>))<br><span class="hljs-number">0.3</span><br></code></pre></div></td></tr></table></figure><p>先扯这么多吧！今天收获了一个硬核的芝士~</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>编程</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Python</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>浅谈 RedeSky 服务器验证机制</title>
+    <link href="/2021/10/06/%E6%B5%85%E8%B0%88-RedeSky-%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%AA%8C%E8%AF%81%E6%9C%BA%E5%88%B6/"/>
+    <url>/2021/10/06/%E6%B5%85%E8%B0%88-RedeSky-%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%AA%8C%E8%AF%81%E6%9C%BA%E5%88%B6/</url>
+    
+    <content type="html"><![CDATA[<p>前几天在玩 <code>RedeSky</code> 服务器的时候，发现这个服务器虽然是离线验证，但需要去官网注册一个论坛账号才能玩；而这个账号的密码对应的就是进服务器 <code>/login</code> 的密码。</p><p>于是我对这个验证机制产生了兴趣，因为在此之前我没见过类似这种验证方式的服务器。</p><span id="more"></span><p>我想这种服务器的安全性一定很好，不仅因为注册论坛账号需要邮箱，并且一个邮箱只能注册一个账号；而且因为这个服务器的反作弊很好，封禁直接连带 IP、论坛账号一同封禁。</p><p>所以我突发奇想，想做一个类似这种验证方式的服务器插件。<del>顺便测试一下我的 Java 水平怎么样。</del></p><h1 id="思路和简单实现"><a href="#思路和简单实现" class="headerlink" title="思路和简单实现"></a>思路和简单实现</h1><p>既然是网页注册，那么我们的插件就一定具备简易的 <code>Web 服务器</code> 的功能。于是我翻阅资料，知道可以使用 <strong><code>java.net.ServerSocket</code></strong> 和 <strong><code>java.net.Socket</code></strong> 来实现这个功能。</p><figure class="highlight java"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">WebServer</span><span class="hljs-params">(<span class="hljs-keyword">int</span> port)</span> </span>&#123;<br>    <span class="hljs-keyword">this</span>.port = port;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">startServer</span><span class="hljs-params">()</span> </span>&#123;<br>    <span class="hljs-keyword">try</span> &#123;<br>        <span class="hljs-keyword">this</span>.serverSocket = <span class="hljs-keyword">new</span> ServerSocket(<span class="hljs-keyword">this</span>.port);<br>    &#125; <span class="hljs-keyword">catch</span> (IOException e) &#123; <span class="hljs-comment">// 可能会抛出 IOException</span><br>        e.printStackTrace();  <span class="hljs-comment">// 端口被占用就会启动失败</span><br>    &#125;<br>&#125;<br></code></pre></div></td></tr></table></figure><p><strong><code>Socket 服务器</code></strong> 建立完毕了，接下来是？当然是接受请求啦！写个 <strong><code>while</code></strong> 循环来接受请求：</p><figure class="highlight java"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">await</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException </span>&#123;<br>    <span class="hljs-comment">// 循环等待 request 请求</span><br>    <span class="hljs-keyword">while</span> (<span class="hljs-keyword">true</span>) &#123;<br>        Socket socket;<br>        InputStream inputStream;<br>        OutputStream outputStream;<br>        <span class="hljs-keyword">try</span> &#123;<br>            socket = <span class="hljs-keyword">this</span>.serverSocket.accept(); <span class="hljs-comment">// Socket 对象</span><br>            inputStream = socket.getInputStream(); <span class="hljs-comment">// 接收到的请求的内容</span><br>            outputStream = socket.getOutputStream(); <span class="hljs-comment">// 返回的内容</span><br><br>            <span class="hljs-comment">// 解析 inputStream 中的内容</span><br>            <span class="hljs-comment">// ···</span><br><br>            <span class="hljs-comment">// 解析完关闭 Socket 对象</span><br>            socket.shutdownOutput();<br>            socket.close();<br>        &#125; <span class="hljs-keyword">catch</span> (StopServer e) &#123; <span class="hljs-comment">// 循环结束的标志是解析过程中抛出 StopServer</span><br>            <span class="hljs-keyword">break</span>;<br>        &#125; <span class="hljs-keyword">catch</span> (IOException e) &#123;<br>            e.printStackTrace();<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">this</span>.serverSocket.close(); <span class="hljs-comment">// 关闭 Socket 服务器</span><br>&#125;<br></code></pre></div></td></tr></table></figure><div class="note note-warning">            <p>网页注册等请避免使用 <code>GET</code> 请求，请使用 <code>POST</code>！</p>          </div><p><strong><code>outputStream</code></strong> 的内容应该是这样：</p><figure class="highlight json"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs json">HTTP/<span class="hljs-number">1.1</span> <span class="hljs-number">200</span><br>Content-type:text/json;charset=UTF<span class="hljs-number">-8</span><br><br>&#123;<span class="hljs-attr">&quot;code&quot;</span>:<span class="hljs-number">200</span>,<span class="hljs-attr">&quot;success&quot;</span>:<span class="hljs-literal">true</span>&#125;<br></code></pre></div></td></tr></table></figure><p>返回一个 <code>Json</code> 字符串，告诉是否注册成功，方便网站和登录验证。</p><p>紧接着，将这个注册的数据保存在数据库中，并放到内存里等待玩家登录的时候使用。</p><p>接下来就是等玩家登录了，使用 <strong><code>org.bukkit.event.player.AsyncPlayerPreLoginEvent</code></strong> ，然后就和普通的登录插件差不多。将玩家名和密码与数据库中的论坛名和密码对比，如果相同则通过验证。</p><h1 id="后话"><a href="#后话" class="headerlink" title="后话"></a>后话</h1><p>这么说，感觉实现这个插件并不是很难；但是，我为了省事就直接用明文储存密码了。</p><div class="note note-danger">            <p><strong>千万不要偷懒用明文储存密码，因为这是非常危险的！</strong><sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="服主可靠吗？">[1]</span></a></sup></p>          </div><p>这个插件这样子就算完工了，不过还是有一些 <code>Bug</code>，可能时不时来一个 <code>NullPointerException</code>（笑），所以我就不放 <strong><code>Github</code></strong> 了…</p><p>不管了，代码和人有一个能跑就行 (ノ￣▽￣)~</p><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><section class="footnotes"><div class="footnote-list"><ol><li><span id="fn:1" class="footnote-text"><span><a href="https://plgdev.xuogroup.top/#/2-3?id=%E6%9C%8D%E4%B8%BB%E5%8F%AF%E9%9D%A0%E5%90%97%EF%BC%9F">服主可靠吗？</a><a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩</a></span></span></li></ol></div></section>]]></content>
+    
+    
+    <categories>
+      
+      <category>编程</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Minecraft</tag>
+      
+      <tag>Java</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Git 报错 &quot;Support for password authentication was removed&quot;</title>
+    <link href="/2021/10/04/Git-%E6%8A%A5%E9%94%99-Support-for-password-authentication-was-removed/"/>
+    <url>/2021/10/04/Git-%E6%8A%A5%E9%94%99-Support-for-password-authentication-was-removed/</url>
+    
+    <content type="html"><![CDATA[<p>今天在更新博客的时候，刚想 push 到仓库，<code>Git</code> 就抛了这样的错误：<code>Support for password authentication was removed</code>。</p><span id="more"></span><figure class="highlight plaintext"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs text">remote: Support for password authentication was removed on August 13, 2021. Please use a personal access token instead.<br>remote: Please see https://github.blog/2020-12-15-token-authentication-requirements-for-git-operations/ for more information.<br></code></pre></div></td></tr></table></figure><p>翻译后得知：<code>Github</code> 对密码身份验证的支持在 <strong>2021-08-13</strong> 删除，让我们使用令牌 <code>Token</code> 来验证。</p><p>想了一下，我以前的确是用的 <strong>用户名+密码</strong> 的方式使用 <code>Git</code> 的。</p><p>于是，我按照 <code>https://github.blog/2020-12-15-token-authentication-requirements-for-git-operations/</code> 的提示去搞了一个 <code>Token</code>，然后放到了 Windows 的凭据里，最后验证成功。</p><h1 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h1><ol><li>进入 <a href="https://github.com/settings/tokens"><code>Github Token</code> 管理页面</a>；</li><li>点击右上角 <code>Generate new token</code>；</li><li><code>Note</code> 写你这个 Token 使用来干什么的，比如我用来 push blog 的；</li><li><code>Expiration</code> 过期时间，根据需求来选，我直接选了不过期（不推荐这样）；</li><li><code>Select scopes</code> 选中一个 <code>repo</code> 就行了；</li><li>复制生成的 Token，打开 Windows 控制面板，找到凭据管理</li><li>找到 <code>git:https://&#123;你的用户名&#125;@github.com</code> 这一条（这一条因你的验证方式而异，比如我的就是用户名+密码），然后编辑这个凭据，密码改为 Token；</li><li>保存即可。</li></ol>]]></content>
+    
+    
+    <categories>
+      
+      <category>编程</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Github</tag>
+      
+      <tag>Git</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Hello！</title>
+    <link href="/2021/06/13/Hello/"/>
+    <url>/2021/06/13/Hello/</url>
+    
+    <content type="html"><![CDATA[<p>WindLeaf 的小博客开业啦！</p><p>在这里我会分享一些日常、编程、游戏以及其他乱七八糟的事情~</p><span id="more"></span><p><del>当然少不了摸鱼！</del></p><p><strong>(〃’▽’〃)</strong></p>]]></content>
+    
+    
+    <categories>
+      
+      <category>日常</category>
+      
+    </categories>
+    
+    
+  </entry>
+  
+  
+  
+  
+</search>
